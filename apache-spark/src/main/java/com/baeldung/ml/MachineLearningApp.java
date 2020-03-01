@@ -1,8 +1,12 @@
 package com.baeldung.ml;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -22,6 +26,9 @@ import org.apache.spark.mllib.stat.Statistics;
 import scala.Tuple2;
 
 public class MachineLearningApp {
+
+    private static final String PATH_LR_DATA = "apache-spark/model/logistic-regression/data/";
+    private static final String PATH_LR_METADATA = "apache-spark/model/logistic-regression/metadata/";
 
     public static void main(String[] args) {
 
@@ -95,11 +102,18 @@ public class MachineLearningApp {
         double accuracy = metrics.accuracy();
         System.out.println("Model Accuracy on Test Data: " + accuracy);
 
+        try {
+            FileUtils.cleanDirectory(new File(PATH_LR_DATA));
+            FileUtils.cleanDirectory(new File(PATH_LR_METADATA));
+            FileUtils.deleteDirectory(new File(PATH_LR_DATA));
+            FileUtils.deleteDirectory(new File(PATH_LR_METADATA));
+        } catch (IOException ignore) { }
+
         // 7. Model Saving and Loading
         // 7.1. Model Saving
-        model.save(sc.sc(), "model\\logistic-regression");
+        model.save(sc.sc(), "apache-spark/model/logistic-regression");
         // 7.2. Model Loading
-        LogisticRegressionModel sameModel = LogisticRegressionModel.load(sc.sc(), "model\\logistic-regression");
+        LogisticRegressionModel sameModel = LogisticRegressionModel.load(sc.sc(), "apache-spark/model/logistic-regression");
         // 7.3. Prediction on New Data
         Vector newData = Vectors.dense(new double[] { 1, 1, 1, 1 });
         double prediction = sameModel.predict(newData);
