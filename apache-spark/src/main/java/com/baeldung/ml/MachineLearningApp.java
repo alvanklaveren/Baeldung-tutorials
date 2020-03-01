@@ -30,6 +30,7 @@ public class MachineLearningApp {
             .setMaster("local[2]")
             .set("spark.executor.memory", "3g")
             .set("spark.driver.memory", "3g");
+
         JavaSparkContext sc = new JavaSparkContext(conf);
         Logger.getLogger("org")
             .setLevel(Level.OFF);
@@ -37,7 +38,7 @@ public class MachineLearningApp {
             .setLevel(Level.OFF);
 
         // 2. Loading the Data-set
-        String dataFile = "data\\iris.data";
+        String dataFile = "apache-spark/data/iris.data";
         JavaRDD<String> data = sc.textFile(dataFile);
 
         // 3. Exploratory Data Analysis
